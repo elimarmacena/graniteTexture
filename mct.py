@@ -18,6 +18,8 @@ def mct(matrix, approach=8):
 			window_sum = _makeWindowSum(current_window)
 			avg_window = window_sum // 9
 			window_mct = _findMctWindow(current_window,avg_window)
+			mct_line.append(window_mct)
+		mct_matrix.append(mct_line)
 
 	return 0
 
