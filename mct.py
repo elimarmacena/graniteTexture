@@ -9,19 +9,22 @@ def mct(matrix, approach=8):
 		raise Exception('Matrix size is not valid')
 	row_agent = 0
 	mct_matrix = []
-	while(row_agent <= (num_row - 2)):
+	while(row_agent <= (num_row - 3)):
 		column_agent = 0
 		mct_line = []
-		while(column_agent <= (num_column - 2)):
-			current_window = [matrix[row_agent][num_column:num_column+2], matrix[row_agent+1]
-							  [num_column:num_column+2], matrix[row_agent+2][num_column:num_column+2]]
+		while(column_agent <= (num_column - 3)):
+			current_window = [matrix[row_agent][column_agent:column_agent+3], matrix[row_agent+1]
+							  [column_agent:column_agent+3], matrix[row_agent+2][column_agent:column_agent+3]]
 			window_sum = _makeWindowSum(current_window)
 			avg_window = window_sum // 9
 			window_mct = _findMctWindow(current_window,avg_window)
 			mct_line.append(window_mct)
+			column_agent = column_agent + 1
+			
 		mct_matrix.append(mct_line)
-
-	return 0
+		row_agent = row_agent + 1
+	print(len(mct_matrix))
+	return mct_matrix
 
 
 def _makeWindowSum(window):
