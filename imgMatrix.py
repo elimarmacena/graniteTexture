@@ -7,7 +7,7 @@ sys.path.append(diretorio)
 
 
 def imgToMatrix(fileLocation: str):
-    # open the passed image as a gray scale image
+    # open the passed image as a grayscale image
     image = Image.open(fileLocation).convert('L')
     img_ar = np.asarray(image)
     return(img_ar)
