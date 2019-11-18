@@ -1,19 +1,20 @@
 # as default the function work the algorith using the 8bits approach
 # having 2^8 values possible
 import numpy as np
+import commons as Commons
 
 def mct(matrix, approach=8):
 	num_row = len(matrix)
-	num_column = len(matrix[0])
-	if(num_row < 3 and num_column < 3):
+	num_col = len(matrix[0])
+	if(num_row < 3 or num_col < 3):
 		raise Exception('Matrix size is not valid')
 	row_agent = 0
 	mct_matrix = []
-	mct_histogram = _startHistogram()
+	mct_histogram = Commons.startHistogram(256)
 	while(row_agent <= (num_row - 3)):
 		column_agent = 0
 		mct_line = []
-		while(column_agent <= (num_column - 3)):
+		while(column_agent <= (num_col - 3)):
 			current_window = [matrix[row_agent][column_agent:column_agent+3], matrix[row_agent+1]
 							  [column_agent:column_agent+3], matrix[row_agent+2][column_agent:column_agent+3]]
 			window_sum = _makeWindowSum(current_window)
@@ -29,11 +30,11 @@ def mct(matrix, approach=8):
 
 
 def _makeWindowSum(window):
-	sum = 0
+	sum_window = 0
 	for l in range(len(window)):
 		for c in range(len(window[l])):
-			sum = sum + window[l][c]
-	return sum
+			sum_windowum = sum_window + window[l][c]
+	return sum_window
 
 def _findMctWindow(window,avg_value):
 	string_bit = ''
@@ -67,8 +68,3 @@ def _findMctWindow(window,avg_value):
 		string_bit = string_bit +('1' if is_great else '0')
 	return int(string_bit,2)
 
-def _startHistogram():
-	histogram_dict = {}
-	for i in range(256):
-		histogram_dict[i] = 0
-	return histogram_dict
