@@ -3,7 +3,7 @@
 import numpy as np
 import commons as Commons
 
-def mct(matrix, approach=8):
+def mct(matrix:np.array, approach=8):
 	num_row = len(matrix)
 	num_col = len(matrix[0])
 	if(num_row < 3 or num_col < 3):
@@ -15,8 +15,8 @@ def mct(matrix, approach=8):
 		column_agent = 0
 		mct_line = []
 		while(column_agent <= (num_col - 3)):
-			current_window = [matrix[row_agent][column_agent:column_agent+3], matrix[row_agent+1]
-							  [column_agent:column_agent+3], matrix[row_agent+2][column_agent:column_agent+3]]
+			#getting a window from the image
+			current_window = matrix[row_agent:(row_agent+3),column_agent:(column_agent+3)]
 			window_sum = _makeWindowSum(current_window)
 			avg_window = window_sum // 9
 			mct_value = _findMctWindow(current_window,avg_window)
@@ -33,7 +33,7 @@ def _makeWindowSum(window):
 	sum_window = 0
 	for l in range(len(window)):
 		for c in range(len(window[l])):
-			sum_windowum = sum_window + window[l][c]
+			sum_window = sum_window + window[l][c]
 	return sum_window
 
 def _findMctWindow(window,avg_value):
