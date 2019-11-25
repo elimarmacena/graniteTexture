@@ -1,7 +1,7 @@
 import commons as Commons
 import numpy as np
 
-def ctdn(matrix):
+def ctdn(matrix:np.array):
     num_row = len(matrix)
     num_col = len(matrix[0])
     if(num_row < 9 or num_col < 9):
@@ -13,13 +13,7 @@ def ctdn(matrix):
         column_agent = 0
         ctdn_line = []
         while(column_agent < (len(num_col) -9)):
-            current_window = [
-            matrix[row_agent][column_agent:column_agent+9], matrix[row_agent+1][column_agent:column_agent+9],
-            matrix[row_agent+2][column_agent:column_agent+9], matrix[row_agent+3][column_agent:column_agent+9],
-            matrix[row_agent+4][column_agent:column_agent+9], matrix[row_agent+5][column_agent:column_agent+9],
-            matrix[row_agent+6][column_agent:column_agent+9], matrix[row_agent+7][column_agent:column_agent+9],
-            matrix[row_agent+8][column_agent:column_agent+9], matrix[row_agent+9][column_agent:column_agent+9]
-            ]
+            current_window = matrix[row_agent:(row_agent+9),column_agent:(column_agent+9)]
             avg_center_window = _centerAvg(current_window)
             ctdn_value = _findCtdnWindow(current_window,avg_center_window)
             ctdn_line.append(ctdn_value)

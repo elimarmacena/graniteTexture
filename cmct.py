@@ -1,7 +1,5 @@
 import mct as mct
 import imgMatrix as imgUtil
-from PIL import Image
-
 def cmct(image:str):
     #gray image matrix
     image_matrix = imgUtil.imgToMatrix(image)
