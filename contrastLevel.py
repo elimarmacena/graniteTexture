@@ -1,4 +1,5 @@
 import numpy as np
+import mct as mct8
 from math import pow
 def contrastVAR(matrix:np.array):
 	sectioned_matrix = _sectionMatrix(matrix, 4)
@@ -26,20 +27,26 @@ def contrastCompute(matrix:np.array):
 		return None
 	row_agent = 0
 	constrast_vet = []
+	mct8_vet = []
 	while(row_agent <= (num_row - 3)):
 		column_agent = 0
 		while(column_agent <= (num_col - 3)):
 			current_window = matrix[row_agent:(row_agent+3),column_agent:(column_agent+3)]
-			#contrast computed based in OJALA formule
-			#VARp = (1/P) Sum(Ip - u)^2
+			# contrast computed based in OJALA formule
+			# VARp = (1/P) Sum(Ip - μ)^2
 			window_size = len(current_window[0]) * len(current_window)
+			# @mu_value = μ letter
 			mu_value = _getMuValue(current_window)
 			sum_result = _getSumWindowMu(current_window, mu_value)
 			constrast_value = (1/window_size)*sum_result
 			constrast_vet.append(constrast_value)
+			sum_window_values = mct8._makeWindowSum(current_window)
+			mct8_window = mct8._findMctWindow(current_window, (sum_window_values // 9))
+			mct8_vet.append(mct8_window)
 			column_agent += 1
 		row_agent += 1
-	return (np.asarray(constrast_vet))
+	vet_result = [np.mean(constrast_vet),np.mean(mct8_vet),np.var(mct8_vet)]
+	return (np.asarray(vet_result))
 
 def _getMuValue(matrix_section):
 	mu_amount = 0
