@@ -1,7 +1,7 @@
 import imgMatrix as ImgUtil
 import cmct
 import ctdn
-import contrastLevel as Contrast
+import statisticVector as statistic
 
 def ecmct(file_locate:str):
     #getting the cmct from the file
@@ -14,13 +14,12 @@ def ecmct(file_locate:str):
     ctdn_matrix,ctdn_histogram = ctdn.ctdn(image_matrix)
 
     #getting the contrast information
-    section_contrast,subsection_contrast =  Contrast.contrastVAR(image_matrix)
+    statistic_info =  statistic.statisticVector(image_matrix)
 
     #information concatenation
     ecmct_histogram = []
     ecmct_histogram.extend(cmct_histogram)
     ecmct_histogram.extend(ctdn_histogram)
-    ecmct_histogram.extend(section_contrast)
-    ecmct_histogram.extend(subsection_contrast)
+    ecmct_histogram.extend(statistic_info)
     
     return ecmct_histogram
