@@ -9,10 +9,10 @@ def ctdn(matrix:np.array):
     row_agent = 0
     ctdn_matrix = []
     ctdn_histogram = Commons.startHistogram(256)
-    while(row_agent < (len(num_row) - 9)):
+    while(row_agent < (num_row - 9) ):
         column_agent = 0
         ctdn_line = []
-        while(column_agent < (len(num_col) -9)):
+        while(column_agent < (num_col -9)):
             current_window = matrix[row_agent:(row_agent+9),column_agent:(column_agent+9)]
             avg_center_window = _centerAvg(current_window)
             ctdn_value = _findCtdnWindow(current_window,avg_center_window)
@@ -31,6 +31,7 @@ def _centerAvg(nine_window):
             sum_center += value
     return sum_center // 9
 
+# In our study K means 4
 def _findCtdnWindow(nine_window,avg):
     bit_string = ''
     is_great = False
@@ -38,14 +39,14 @@ def _findCtdnWindow(nine_window,avg):
     for fl in range(0,size_first_line,4):
         is_great = nine_window[0][fl] >= avg
         bit_string = bit_string + ('1' if is_great else '0')
-    size_column = len(nine_window[len(nine_window)-1])
-    for fc in range(0,size_column,4):
-        is_great = nine_window[fc][len(nine_window)-1]
-        bit_string = bit_string + ('1' if is_great else '0')
+    #TODO: change the values 4 and 8 to a viable representing the value of K and K*2 
+    is_great = nine_window[0+4][0+8] >= avg 
+    bit_string = bit_string + ('1' if is_great else '0')
     size_last_line = len(nine_window[len(nine_window)-1])
     for ls in range(size_last_line-5,-1,-4):
-        is_great = nine_window[len(nine_window)-1][ls]
+        is_great = nine_window[len(nine_window)-1][ls] >= avg
         bit_string = bit_string + ('1' if is_great else '0')
-    is_great = nine_window[0][size_column-5]
+    #TODO: change the value 4 to a viable representing the value of K
+    is_great = nine_window[0 + 4][0] #this will be change to a variable seting the value of K 
     bit_string = bit_string + ('1' if is_great else '0')
     return int(bit_string,2)
