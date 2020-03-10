@@ -17,7 +17,7 @@ def mct(matrix:np.array, approach=8):
 		while(column_agent <= (num_col - 3)):
 			#getting a window from the image
 			current_window = matrix[row_agent:(row_agent+3),column_agent:(column_agent+3)]
-			window_sum = _makeWindowSum(current_window)
+			window_sum = Commons.sumMatrixData(current_window)
 			avg_window = window_sum // 9
 			mct_value = _findMctWindow(current_window,avg_window)
 			mct_line.append(mct_value)
@@ -29,42 +29,26 @@ def mct(matrix:np.array, approach=8):
 	return (np.asarray(mct_matrix),mct_histogram)
 
 
-def _makeWindowSum(window):
-	sum_window = 0
-	for l in range(len(window)):
-		for c in range(len(window[l])):
-			sum_window = sum_window + window[l][c]
-	return sum_window
-
 def _findMctWindow(window,avg_value):
-	string_bit = ''
-	is_great = False
+	bit_string = ''
 	
-	#Top line
-	cells_first_line = len(window[0])
-	for tl in range(cells_first_line):
-		is_great = window[0][tl] >= avg_value
-		string_bit = string_bit + ('1' if is_great else '0')
-	
-	#Left coloumn
-	total_columns = len(window)
-	#ignore the fist information, already check in the previous loop
-	for lc in range(1,total_columns):
-		is_great = window[lc][len(window)-1] >= avg_value
-		string_bit = string_bit + ('1' if is_great else '0')
-	
-	#Bottom line
-	final_line_index = len(window)-1
-	total_cells_final_line = len(window[final_line_index]) 
-	#ignore last cell, already check in the previous loop
-	for bl in range(total_cells_final_line - 2,-1,-1):
-		is_great = window[len(window)-1][bl] >= avg_value
-		string_bit = string_bit + ('1' if is_great else '0')
-	
-	#Right column
-	#ignore values already checked in the previous loops (first value of the first line and first value of the last line)
-	for rc in range(len(window)-2,0,-1):
-		is_great = window[rc][0] >= avg_value
-		string_bit = string_bit +('1' if is_great else '0')
-	return int(string_bit,2)
+	#First Line
+	top_left		=	window[0][0]
+	top_middle		=	window[0][1]
+	top_right		=	window[0][2]
+
+	#Second Line
+	middle_left		=	window[1][0]
+	middle_right	=	window[1][2]
+
+	#Final Line
+	bottom_left		=	window[2][0]
+	bottom_middle	=	window[2][1]
+	bottom_right	=	window[2][2]
+
+	neighborhood = [top_left,top_middle,top_right,middle_right,bottom_right,bottom_middle,bottom_left,middle_left]
+	for neighbor_value in neighborhood:
+		bit_string = bit_string + ('1' if (neighbor_value >= avg_value) else '0')
+
+	return int(bit_string,2)
 
