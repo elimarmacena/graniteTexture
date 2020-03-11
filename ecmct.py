@@ -11,7 +11,7 @@ def ecmct(file_locate:str):
     image_matrix = ImgUtil.imgToMatrix(file_locate)
 
     #getting the ctdn information
-    ctdn_matrix,ctdn_histogram = ctdn.ctdn(image_matrix)
+    ctdn_histogram = ctdn.ctdn(image_matrix)
 
     #getting the contrast information
     statistic_info =  statistic.statisticVector(image_matrix)

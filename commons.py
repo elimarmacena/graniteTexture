@@ -8,7 +8,7 @@ def startHistogram(size_histogram:int):
 
 def sumMatrixData(matrix:np.array):
 	sum_data = 0
-	for line in range(len(matrix)):
-		for column in range(len(matrix[line])):
+	for line in matrix:
+		for column in line:
 			sum_data += column
 	return sum_data
