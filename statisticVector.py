@@ -1,5 +1,6 @@
 import numpy as np
 import mct as mct8
+import commons
 from math import pow
 
 def statisticVector(matrix_input:np.array, SUBDIV=2):
@@ -8,7 +9,7 @@ def statisticVector(matrix_input:np.array, SUBDIV=2):
 		# @matrix_inpu subdivision
 		segmented_matrix = _sectionMatrix(matrix_input,(current_level + 1))
 		for segment in segmented_matrix:
-			segment_information.append(_getSegmentInformation(segment))
+			segment_information.extend(_getSegmentInformation(segment))
 	return segment_information
 
 	
@@ -57,7 +58,7 @@ def _getSegmentInformation(matrix:np.array):
 			sum_result = _getSumWindowMu(current_window, mu_value)
 			constrast_value = (1/window_size)*sum_result
 			constrast_vet.append(constrast_value)
-			sum_window_values = mct8._makeWindowSum(current_window)
+			sum_window_values = commons.sumMatrixData(current_window)
 			mct8_window = mct8._findMctWindow(current_window, (sum_window_values // 9))
 			mct8_vet.append(mct8_window)
 			column_agent += 1
