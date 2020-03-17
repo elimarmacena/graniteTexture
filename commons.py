@@ -2,9 +2,7 @@ import numpy as np
 import glob
 
 def startHistogram(size_histogram:int):
-	histogram_dict = {}
-	for i in range(size_histogram):
-		histogram_dict[i] = 0
+	histogram_dict = [0]*size_histogram
 	return histogram_dict
 
 def sumMatrixData(matrix:np.array):
