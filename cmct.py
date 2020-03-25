@@ -1,4 +1,4 @@
-import mct as mct
+import asyncMct as mct
 import imgMatrix as imgUtil
 def cmct(image:str):
     #gray image matrix
