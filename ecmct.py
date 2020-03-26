@@ -1,4 +1,4 @@
-import imgMatrix as ImgUtil
+from commons import imgToMatrix
 import cmct
 import ctdn
 import statisticVector as statistic
@@ -8,7 +8,7 @@ def ecmct(file_locate:str):
     cmct_histogram = cmct.cmct(file_locate)
     
     #loading the file as a matrix
-    image_matrix = ImgUtil.imgToMatrix(file_locate)
+    image_matrix = imgToMatrix(file_locate)
 
     #getting the ctdn information
     ctdn_histogram = ctdn.ctdn(image_matrix)

@@ -1,8 +1,8 @@
 import asyncMct as mct
-import imgMatrix as imgUtil
+from commons import imgToMatrix
 def cmct(image:str):
     #gray image matrix
-    image_matrix = imgUtil.imgToMatrix(image)
+    image_matrix = imgToMatrix(image)
     #first find mct8 of the original image
     mct_original,histogram_original = mct.mct(image_matrix)
     #recursive data

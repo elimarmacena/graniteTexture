@@ -1,5 +1,16 @@
 import numpy as np
 import glob
+from PIL import Image
+import sys
+from os.path import dirname, abspath
+diretorio = dirname(dirname(abspath(__file__)))
+sys.path.append(diretorio)
+
+def imgToMatrix(fileLocation: str):
+    # open the passed image as a grayscale image
+    image = Image.open(fileLocation).convert('L')
+    img_ar = np.asarray(image)
+    return(img_ar)
 
 def startHistogram(size_histogram:int):
 	histogram_dict = [0]*size_histogram
@@ -22,7 +33,6 @@ def summaryzeImgPaths():
 		paths_type.append(image)
 		image_sumary[granite_type] = paths_type
 	return image_sumary
-
 
 def getAllImages():
     # images are currently divided into folders inside the master folder

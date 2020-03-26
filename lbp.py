@@ -1,8 +1,7 @@
 import numpy as np
-import imgMatrix as ImgUtil
 import commons as Commons
 def lbp(file_locate:str):
-    matrix = ImgUtil.imgToMatrix(file_locate)
+    matrix = Commons.imgToMatrix(file_locate)
     num_row = len(matrix)
     num_col = len(matrix[0])
     if(num_row < 3 or num_col < 3 ):
