@@ -4,8 +4,13 @@ import commons
 import ecmct
 import lbp
 import cmct
+
+
+
 # TODO save each algorith information in a CSV file
 def main():
+#	start_time = time.time()
+#	print('--- %s SECONDS' %(time.time() - start_time))
 	summary_path = commons.summaryzeImgPaths()
 	lbp_file = commons.writeFile('lbp_results.csv')
 	cmct_file = commons.writeFile('cmct_results.csv')
