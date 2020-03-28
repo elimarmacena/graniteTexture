@@ -9,7 +9,7 @@ sys.path.append(diretorio)
 def imgToMatrix(fileLocation: str):
     # open the passed image as a grayscale image
     image = Image.open(fileLocation).convert('L')
-    img_ar = np.asarray(image)
+    img_ar = np.asarray(image.resize((1000,1000)))
     return(img_ar)
 
 def startHistogram(size_histogram:int):

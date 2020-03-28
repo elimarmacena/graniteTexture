@@ -59,7 +59,7 @@ def _getSegmentInformation(matrix:np.array):
 			constrast_value = (1/window_size)*sum_result
 			constrast_vet.append(constrast_value)
 			sum_window_values = commons.sumMatrixData(current_window)
-			mct8_window = mct8._findMctWindow(current_window, (sum_window_values // 9))
+			mct8_window = mct8.getMctValue(current_window, (sum_window_values // 9))
 			mct8_vet.append(mct8_window)
 			column_agent += 1
 		row_agent += 1

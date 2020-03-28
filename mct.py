@@ -19,7 +19,7 @@ def mct(matrix:np.array, approach=8):
 			current_window = matrix[row_agent:(row_agent+3),column_agent:(column_agent+3)]
 			window_sum = Commons.sumMatrixData(current_window)
 			avg_window = window_sum // 9
-			mct_value = _findMctWindow(current_window,avg_window)
+			mct_value = getMctValue(current_window,avg_window)
 			mct_line.append(mct_value)
 			mct_histogram[mct_value] += 1
 			column_agent += 1
@@ -29,7 +29,7 @@ def mct(matrix:np.array, approach=8):
 	return (np.asarray(mct_matrix),mct_histogram)
 
 
-def _findMctWindow(window,avg_value):
+def getMctValue(window,avg_value):
 	bit_string = ''
 	
 	#First Line

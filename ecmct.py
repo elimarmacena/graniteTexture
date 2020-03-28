@@ -1,7 +1,8 @@
 from commons import imgToMatrix
 import cmct
 import ctdn
-import statisticVector as statistic
+import asyncStatisticVector
+import asyncCtdn
 
 def ecmct(file_locate:str):
     #getting the cmct from the file
@@ -11,10 +12,10 @@ def ecmct(file_locate:str):
     image_matrix = imgToMatrix(file_locate)
 
     #getting the ctdn information
-    ctdn_histogram = ctdn.ctdn(image_matrix)
+    ctdn_histogram = asyncCtdn.ctdn(image_matrix)
 
     #getting the contrast information
-    statistic_info =  statistic.statisticVector(image_matrix)
+    statistic_info =  asyncStatisticVector.statisticVector(image_matrix)
 
     #information concatenation
     ecmct_histogram = []
