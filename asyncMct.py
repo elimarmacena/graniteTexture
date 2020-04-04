@@ -15,7 +15,6 @@ def mct(matrix:numpy.array, num_process = 4):
 	for i in range(num_process):
 		p = Process(target=work_center, args=(histogram, current_line, matrix, mct_array))
 		process_list.append(p)
-		print('[PROCESS ' + str(i) + '] WORKING')
 		p.start()
 	# Waiting for the processes
 	for worker in process_list:

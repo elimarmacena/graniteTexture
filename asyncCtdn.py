@@ -12,7 +12,6 @@ def ctdn(matrix:np.array, num_proc = 6):
 	for i in range(num_proc):
 		p = Process(target=work_center,args=(histogram,current_line,matrix))
 		process_list.append(p)
-		print('[PROCESS ' + str(i) + '] WORKING')
 		p.start()
 	for worker in process_list:
 		worker.join()
