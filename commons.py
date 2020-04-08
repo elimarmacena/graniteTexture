@@ -7,10 +7,10 @@ diretorio = dirname(dirname(abspath(__file__)))
 sys.path.append(diretorio)
 
 def imgToMatrix(fileLocation: str):
-    # open the passed image as a grayscale image
-    image = Image.open(fileLocation).convert('L')
-    img_ar = np.asarray(image.resize((1000,1000)))
-    return(img_ar)
+	# open the passed image as a grayscale image
+	image = Image.open(fileLocation).convert('L')
+	img_ar = np.asarray(image.resize((1000,1000)))
+	return(img_ar)
 
 def startHistogram(size_histogram:int):
 	histogram_dict = [0]*size_histogram
@@ -35,10 +35,10 @@ def summaryzeImgPaths():
 	return image_sumary
 
 def getAllImages():
-    # images are currently divided into folders inside the master folder
-    master_folder = '.\\GraniteImgs\\*\\*'
-    image_path = glob.glob(master_folder)
-    return image_path
+	# images are currently divided into folders inside the master folder
+	master_folder = '.\\GraniteImgs\\*\\*'
+	image_path = glob.glob(master_folder)
+	return image_path
 
 def writeFile(file_path:str):
 	file_data = open(file_path, 'w')
@@ -49,3 +49,17 @@ def addFileLine(line_content:str, file_data):
 
 def closeFile(file_data):
 	file_data.close()
+
+def getFileData(file_path:str):
+	data_result = list()
+	file = open(file_path,'r')
+	line_text = file.readline()
+	while(line_text):
+		current_line = line_text.strip().split(',')
+		stone_type  = current_line[0].split('\\')[-1].split('_')[0]
+		# To a easy work, for now every numeric value will be float
+		algorithm_data = tuple(float(i) for i in current_line[1:])
+		data_result.append((stone_type,) + algorithm_data)
+		line_text = file.readline()
+	file.close()
+	return data_result
