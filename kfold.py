@@ -1,7 +1,7 @@
 from random import seed
 from random import randrange #default python random library
 def kfold(data_sample:list, fold_num = 4):
-    seed()
+    seed(42)
     final_dataset = []
     data_keeper = data_sample.copy()
     fold_size = len(data_sample) // fold_num #if the number of records isn't divisible for the number of folds we lost records.
