@@ -4,7 +4,7 @@ def kfold(data_sample:list, fold_num = 4):
     seed(42)
     final_dataset = []
     data_keeper = data_sample.copy()
-    fold_size = len(data_sample) // fold_num #if the number of records isn't divisible for the number of folds we lost records.
+    fold_size = len(data_sample) // fold_num #if the number of records isn't divisible for the number of folds we lose records.
     for i in range(fold_num):
         fold_data = []
         for i in range(fold_size):
