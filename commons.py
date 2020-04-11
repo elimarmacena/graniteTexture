@@ -40,6 +40,16 @@ def getAllImages():
 	image_path = glob.glob(master_folder)
 	return image_path
 
+def getAllStoneType():
+	path_imagens = getAllImages()
+	stone_type = list()
+	for image in path_imagens:
+		tokenized_path = image.split('\\')
+		granite_type = tokenized_path[-1].split('_')[0]
+		if (granite_type not in stone_type):
+			stone_type.append(granite_type)
+	return stone_type
+
 def writeFile(file_path:str):
 	file_data = open(file_path, 'w')
 	return file_data
