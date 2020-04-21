@@ -33,14 +33,14 @@ def createFuzzyMatrix(result_pred,train_data, filename):
             for j in range(len(fuzzy_matrix[i])):
                 if(fuzzy_matrix[i][j] > 0):
                     percent_result[i][j] = (fuzzy_matrix[i][j] / total_data) * 100
-    np.savetxt(filename,percent_result,delimiter=',',fmt='%.2f',header=(', '.join(stone_types)))
+    np.savetxt(filename,percent_result,delimiter=',',fmt='%.2f',header=(', '.join(stone_types)),comments='')
 
 def main():
     cmct_data_file  = 'D:\\Documents\\GIT\\graniteTexture\\algorithm_data_result\\cmct_results.csv'
     ecmct_data_file = 'D:\\Documents\\GIT\\graniteTexture\\algorithm_data_result\\ecmct_result.csv'
     lbp_data_file   = 'D:\\Documents\\GIT\\graniteTexture\\algorithm_data_result\\lbp_results.csv'
     data_file = [cmct_data_file,ecmct_data_file,lbp_data_file]
-    neighbors_number = 3
+    neighbors_number = 7
     for algorithm_file in data_file:
         algorithm_name = algorithm_file.split('\\')[-1][:-4].split('_')[0]
         print('Prediciton File:',algorithm_name)
