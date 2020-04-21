@@ -26,14 +26,21 @@ def createFuzzyMatrix(result_pred,train_data, filename):
         index_result = stone_types.index(result)
         index_expected = stone_types.index(expected)
         fuzzy_matrix[index_expected][index_result] += 1
-    np.savetxt(filename,fuzzy_matrix,delimiter=',',fmt='%d',header=(', '.join(stone_types)))
+    percent_result = np.zeros((len(stone_types),len(stone_types)),dtype=float)
+    for i in range(len(fuzzy_matrix)):
+        total_data = sum(fuzzy_matrix[i])
+        if(total_data > 0):
+            for j in range(len(fuzzy_matrix[i])):
+                if(fuzzy_matrix[i][j] > 0):
+                    percent_result[i][j] = (fuzzy_matrix[i][j] / total_data) * 100
+    np.savetxt(filename,percent_result,delimiter=',',fmt='%.2f',header=(', '.join(stone_types)))
 
 def main():
     cmct_data_file  = 'D:\\Documents\\GIT\\graniteTexture\\algorithm_data_result\\cmct_results.csv'
     ecmct_data_file = 'D:\\Documents\\GIT\\graniteTexture\\algorithm_data_result\\ecmct_result.csv'
     lbp_data_file   = 'D:\\Documents\\GIT\\graniteTexture\\algorithm_data_result\\lbp_results.csv'
     data_file = [cmct_data_file,ecmct_data_file,lbp_data_file]
-    neighbors_number = 7
+    neighbors_number = 3
     for algorithm_file in data_file:
         algorithm_name = algorithm_file.split('\\')[-1][:-4].split('_')[0]
         print('Prediciton File:',algorithm_name)
@@ -58,7 +65,7 @@ def main():
             model = KNeighborsClassifier(n_neighbors=neighbors_number)
             model.fit(train_features,train_label_encode)
             type_prediction = model.predict(test_features)
-            createFuzzyMatrix(encolder.inverse_transform(type_prediction),encolder.inverse_transform(test_label_encode),f'./fuzzy_matrix/{algorithm_name}_fold{i}_knn{neighbors_number}.csv')
+            createFuzzyMatrix(encolder.inverse_transform(type_prediction),encolder.inverse_transform(test_label_encode),f'./fuzzy_matrix/P_{algorithm_name}_knn{neighbors_number}_fold{i}.csv')
 
             algorithm_accuracy.append(metrics.accuracy_score(test_label_encode,type_prediction) * 100)
         print('==')
