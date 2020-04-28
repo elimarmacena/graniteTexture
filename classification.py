@@ -26,53 +26,71 @@ def createFuzzyMatrix(result_pred,train_data, filename):
         index_result = stone_types.index(result)
         index_expected = stone_types.index(expected)
         fuzzy_matrix[index_expected][index_result] += 1
-    percent_result = np.zeros((len(stone_types),len(stone_types)),dtype=float)
-    for i in range(len(fuzzy_matrix)):
-        total_data = sum(fuzzy_matrix[i])
-        if(total_data > 0):
-            for j in range(len(fuzzy_matrix[i])):
-                if(fuzzy_matrix[i][j] > 0):
-                    percent_result[i][j] = (fuzzy_matrix[i][j] / total_data) * 100
-    np.savetxt(filename,percent_result,delimiter=',',fmt='%.2f',header=(', '.join(stone_types)),comments='')
+    np.savetxt(filename,fuzzy_matrix,delimiter=',',fmt='%.2f',header=(', '.join(stone_types)),comments='')
+
+def createSumConfusionMatrix(original_data, predict_data,filename):
+    stone_types = getAllStoneType()
+    fuzzy_matrix = np.zeros((len(stone_types),len(stone_types)),dtype=int)
+    # As expected both parameters have the same size
+    for i in range(len(original_data)):
+        original_current = original_data[i]
+        predict_current = predict_data[i]
+        # Again both information have the same size here
+        for j in range(len(original_current)):
+            original_index = stone_types.index(original_current[j])
+            predict_index = stone_types.index(predict_current[j])
+            fuzzy_matrix[original_index][predict_index] += 1
+    np.savetxt(filename,fuzzy_matrix,delimiter=',',fmt='%.2f',header=(', '.join(stone_types)),comments='')
+
+def splitInformation(folded_data:list):
+    label = list()
+    features = list()
+    for fold in folded_data:
+        fold_labels = [item[0] for item in fold]
+        fold_features = [item[1:] for item in fold]
+        label.append(fold_labels)
+        features.append(fold_features)
+    return label,features
 
 def main():
     cmct_data_file  = 'D:\\Documents\\GIT\\graniteTexture\\algorithm_data_result\\cmct_results.csv'
     ecmct_data_file = 'D:\\Documents\\GIT\\graniteTexture\\algorithm_data_result\\ecmct_result.csv'
     lbp_data_file   = 'D:\\Documents\\GIT\\graniteTexture\\algorithm_data_result\\lbp_results.csv'
     data_file = [cmct_data_file,ecmct_data_file,lbp_data_file]
-    neighbors_number = 7
-    for algorithm_file in data_file:
-        algorithm_name = algorithm_file.split('\\')[-1][:-4].split('_')[0]
-        print('Prediciton File:',algorithm_name)
-        algorithm_data = getFileData(algorithm_file)
-        folded_data = kfold(algorithm_data,10)
-        algorithm_accuracy = list()
-        for i in range(len(folded_data)):
-            test_data = folded_data[i]
-            train_data = list()
-            for j in range(len(folded_data)):
-                if j != i:
-                    train_data.extend(folded_data[j])
-            train_label = [item[0] for item in train_data]
-            test_label = [item[0] for item in test_data]
-        
-            train_features = [item[1:] for item in train_data]
-            test_features = [item[1:] for item in test_data]
-
-            encolder = preprocessing.LabelEncoder()
-            test_label_encode = encolder.fit_transform(test_label)
-            train_label_encode = encolder.fit_transform(train_label)            
-            model = KNeighborsClassifier(n_neighbors=neighbors_number)
-            model.fit(train_features,train_label_encode)
-            type_prediction = model.predict(test_features)
-            createFuzzyMatrix(encolder.inverse_transform(type_prediction),encolder.inverse_transform(test_label_encode),f'./fuzzy_matrix/P_{algorithm_name}_knn{neighbors_number}_fold{i}.csv')
-
-            algorithm_accuracy.append(metrics.accuracy_score(test_label_encode,type_prediction) * 100)
-        print('==')
-        plotMetric(algorithm_accuracy,(f'{algorithm_name}_KNN{neighbors_number}.png'),neighbors_number,algorithm_name)
-
-            
-    
+    k_neighbors = [3,5,7]
+    for neighbor_number in k_neighbors:
+        print(f'CURRENT K-NEIGHBOR: {neighbor_number}')
+        for algorithm_file in data_file:
+            algorithm_accuracy = list()
+            algorithm_name = algorithm_file.split('\\')[-1][:-4].split('_')[0]
+            order_test = list()
+            order_predict = list()
+            print(f'CLASSIFICATION USING  {algorithm_name} AS EXTRACTOR')
+            algorithm_data = getFileData(algorithm_file)
+            folded_data = kfold(algorithm_data,fold_num=10)
+            fold_labels, fold_features = splitInformation(folded_data)
+            for i in range(len(folded_data)):
+                # Getting test information
+                test_label = fold_labels[i]
+                test_features = fold_features[i]
+                # Getting train information
+                train_label = list()
+                train_features = list()
+                for j in range(len(folded_data)):
+                    if j != i:
+                        train_label.extend(fold_labels[j])
+                        train_features.extend(fold_features[j])
+                model = KNeighborsClassifier(n_neighbors=neighbor_number)
+                model.fit(train_features,train_label)
+                predictions = model.predict(test_features)
+                algorithm_accuracy.append(model.score(test_features,test_label))
+                order_test.append(test_label)
+                order_predict.append(predictions)
+                #createFuzzyMatrix(predictions,test_label,f'./confusion_matrix/{algorithm_name}_knn{neighbor_number}_fold{i}.csv')
+            #createSumConfusionMatrix(order_test,order_predict,f'./confusion_matrix/{algorithm_name}_knn{neighbor_number}.csv')
+            print(algorithm_accuracy)
+            print(f'Mean Accuray{sum(algorithm_accuracy)/10}')
+            print('EXTRACTOR END\n')
 
 if __name__ == '__main__':
     main()
