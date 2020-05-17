@@ -4,8 +4,6 @@ def lbp(file_locate:str):
     matrix = Commons.imgToMatrix(file_locate)
     num_row = len(matrix)
     num_col = len(matrix[0])
-    if(num_row < 3 or num_col < 3 ):
-        raise Exception('Matrix size is not valid')
     row_agent = 0
     lbp_histogram = Commons.startHistogram(256)
     while(row_agent < num_row):
