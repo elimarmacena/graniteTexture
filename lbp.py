@@ -31,8 +31,11 @@ def bit_value(neighborhood:list, center_value:int):
     return int(bit_string,2)
 
 def get_neighbor(row_index:int,column_index:int,matrix:np.array):
-    if(row_index >= 0 and column_index >= 0):
-        return matrix[row_index][column_index]
-    else:
+    try:
+        if(row_index >= 0 and column_index >= 0):
+            return matrix[row_index][column_index]
+        else:
+            return 0
+    except IndexError:
         return 0
     
