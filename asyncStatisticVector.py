@@ -1,5 +1,5 @@
 import numpy as np
-from mct import getMctValue
+from asyncMct import getMctValue
 from multiprocessing import Process, Array, Value
 def statisticVector(matrix_input:np.array, SUBDIV = 2, NUM_PROC = 4):
 	segment_infomration = list()
@@ -50,38 +50,51 @@ def getSectionStatistics(matrix:np.array,num_proc):
 def work_space(matrix:np.array,contrast_array, mct8_array,current_line):
 	local_line = 0
 	max_row = len(matrix)
-	while (current_line.value <= (max_row - 3)):
+	while (current_line.value < max_row):
 		with current_line.get_lock():
 			local_line = current_line.value
 			current_line.value +=1
 		local_col = 0
 		max_col = len(matrix[local_line])
-		while(local_col <= (max_col -3)):
-			current_window = matrix[local_line:(local_line + 3), local_col:(local_col + 3)]
-			mu_value = getMuValue(current_window)
-			information_sum = getInformationSum(current_window,mu_value)
+		while(local_col < max_col):
+			# top_left, top_middle, top_right, 
+			macro_data = [get_neighbor(local_line-1,local_col-1,matrix),get_neighbor(local_line-1, local_col,matrix),get_neighbor(local_line-1,local_col+1,matrix),
+			# middle_left, middle_middle, middle_right,
+			get_neighbor(local_line,local_col-1,matrix),get_neighbor(local_line,local_col,matrix),get_neighbor(local_line, local_col+1,matrix),
+			# bot_left, bot_middle, bot_right, 
+			get_neighbor(local_line+1,local_col-1,matrix),get_neighbor(local_line+1, local_col,matrix),get_neighbor(local_line+1,local_col+1,matrix)]
+			#current_window = matrix[local_line:(local_line + 3), local_col:(local_col + 3)]
+			mu_value = getMuValue(macro_data)
+			information_sum = getInformationSum(macro_data,mu_value)
 			contrast_value = (1/9) * information_sum
-			mct_value = getMctValue(current_window, int(np.mean(current_window)))
+			mct_value = getMctValue(macro_data, int(np.mean(macro_data)))
 			contrast_array[((max_row -2) * local_line)+local_col] = contrast_value
 			mct8_array[((max_row -2) * local_line)+local_col] = mct_value
 			local_col +=1
 
 #Rewrite using numpy functions
-def getMuValue(macro_matrix):
+def getMuValue(macro_list):
 	mu_amount = 0
-	pixel_amout = 0
-	for line in macro_matrix:
-		for column  in line:
-			mu_amount += column
-			pixel_amout += 1
+	pixel_amout = 9
+	for value  in macro_list:
+		mu_amount += value
 	mu_value = 1/pixel_amout
 	mu_value = mu_value * mu_amount
 	return mu_value
 
-def getInformationSum(macro_matrix,mu_value):
+def getInformationSum(macro_list,mu_value):
 	sum_values = 0
-	for line in macro_matrix:
-		for cell in line:
-			cell_information = cell - mu_value
-			sum_values = sum_values + pow(cell_information,2)
+	for value in macro_list:
+		cell_information = value - mu_value
+		sum_values = sum_values + np.power(cell_information,2)
 	return int(sum_values)
+
+
+def get_neighbor(row_index:int,column_index:int,matrix:np.array):
+	try:
+		if(row_index >= 0 and column_index >= 0):
+			return matrix[row_index][column_index]
+		else:
+			return 0
+	except IndexError:
+		return 0

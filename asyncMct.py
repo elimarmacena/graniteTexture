@@ -2,7 +2,7 @@ import numpy
 from multiprocessing import Process, Array, Value
 import commons
 
-def mct(matrix:numpy.array, num_process = 1):
+def mct(matrix:numpy.array, num_process = 4):
 	num_row = len(matrix)
 	num_col = len(matrix[0])
 	process_list = list()
