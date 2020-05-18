@@ -23,7 +23,7 @@ def mct(matrix:numpy.array, num_process = 1):
 
 def work_center(histogram, current_line, matrix, mct_array):
 	# Variable used to keep the current line and release the lock between the processes
-	local_line = list()
+	local_line = 0
 	max_row = len(matrix)
 	while(current_line.value < max_row):
 		with current_line.get_lock():
