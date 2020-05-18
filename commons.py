@@ -9,7 +9,8 @@ sys.path.append(diretorio)
 def imgToMatrix(fileLocation: str):
 	# open the passed image as a grayscale image
 	image = Image.open(fileLocation).convert('L')
-	img_ar = np.asarray(image.resize((1000,1000)))
+	#img_ar = np.asarray(image.resize((1000,1000)))
+	img_ar = np.asarray(image)
 	return(img_ar)
 
 def startHistogram(size_histogram:int):
@@ -33,6 +34,23 @@ def summaryzeImgPaths():
 		paths_type.append(image)
 		image_sumary[granite_type] = paths_type
 	return image_sumary
+
+def summaryzeTexturePaths():
+	path_images = getAllTextures()
+	image_sumary = {}
+	for image in path_images:
+		tokenized_path = image.split('\\')
+		granite_type = tokenized_path[-1].split('_')[0]
+		paths_type = image_sumary[granite_type] if (granite_type in image_sumary.keys()) else []
+		paths_type.append(image)
+		image_sumary[granite_type] = paths_type
+	image_sumary.pop('Thumbs.db', None)
+	return image_sumary
+
+def getAllTextures():
+	master_folder = '.\\TextureImgs\\*\\*'
+	image_path = glob.glob(master_folder)
+	return image_path
 
 def getAllImages():
 	# images are currently divided into folders inside the master folder

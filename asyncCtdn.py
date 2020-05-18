@@ -21,10 +21,10 @@ def work_center(histogram, current_line, matrix):
 	local_line = 0
 	k_value = 4
 	max_row = len(matrix)
-	while(current_line.value < max_row):
-		with current_line.get_lock():
-			local_line = current_line.value
-			current_line.value += 1
+	with current_line.get_lock():
+		local_line = current_line.value
+		current_line.value += 1
+	while(local_line < max_row):
 		local_col = 0
 		while(local_col <len(matrix[0])):
 			# top_left, top_middle, top_right, 
@@ -45,6 +45,11 @@ def work_center(histogram, current_line, matrix):
 			with histogram.get_lock():
 				histogram[ctdn_value] += 1
 			local_col += 1
+		# End col while
+		with current_line.get_lock():
+			local_line = current_line.value
+			current_line.value += 1
+	# End line while
 
 def getCtdnValue(center_window_data,farther_window_data):
 	center_avg = int(np.mean(center_window_data))

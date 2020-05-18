@@ -50,10 +50,10 @@ def getSectionStatistics(matrix:np.array,num_proc):
 def work_space(matrix:np.array,contrast_array, mct8_array,current_line):
 	local_line = 0
 	max_row = len(matrix)
-	while (current_line.value < max_row):
-		with current_line.get_lock():
-			local_line = current_line.value
-			current_line.value +=1
+	with current_line.get_lock():
+		local_line = current_line.value
+		current_line.value +=1
+	while (local_line < max_row):
 		local_col = 0
 		max_col = len(matrix[local_line])
 		while(local_col < max_col):
@@ -71,6 +71,11 @@ def work_space(matrix:np.array,contrast_array, mct8_array,current_line):
 			contrast_array[((max_row -2) * local_line)+local_col] = contrast_value
 			mct8_array[((max_row -2) * local_line)+local_col] = mct_value
 			local_col +=1
+		# End col while
+		with current_line.get_lock():
+			local_line = current_line.value
+			current_line.value +=1
+	# End line while
 
 #Rewrite using numpy functions
 def getMuValue(macro_list):
