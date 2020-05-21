@@ -61,12 +61,14 @@ def main():
     for neighbor_number in k_neighbors:
         print(f'CURRENT K-NEIGHBOR: {neighbor_number}')
         for algorithm_file in data_file:
-            algorithm_accuracy = list()
-            algorithm_name = algorithm_file.split('\\')[-1][:-4].split('_')[0]
+            # Variable used to check results after k-fold process
             order_test = list()
             order_predict = list()
-            print(f'CLASSIFICATION USING  {algorithm_name} AS EXTRACTOR')
+            algorithm_accuracy = list()
+            # ====================================================
             algorithm_data = getFileData(algorithm_file)
+            algorithm_name = algorithm_file.split('\\')[-1][:-4].split('_')[0]
+            print(f'CLASSIFICATION USING  {algorithm_name} AS EXTRACTOR')
             folded_data = kfold(algorithm_data,fold_num=10)
             fold_labels, fold_features = splitInformation(folded_data)
             for i in range(len(folded_data)):
@@ -94,3 +96,16 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+# SECTION WITH ALL WORK FLOW BASED ON SKLEARN
+# from sklearn.model_selection import train_test_split
+# algorithm_data = getFileData(algorithm_file)
+# label = list()
+# features = list()
+# for current_data in algorithm_data:
+    # label.append(current_data[0])
+    # features.append(current_data[1:])
+# x_train, x_test, y_train, y_test = train_test_split(features, label,test_size=0.9)
+# model = KNeighborsClassifier(n_neighbors=neighbor_number)
+# model.fit(x_train,y_train)
+# print(model.score(x_test,y_test))

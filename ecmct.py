@@ -4,9 +4,9 @@ import ctdn
 import asyncStatisticVector
 import asyncCtdn
 
-def ecmct(file_locate:str):
-    #getting the cmct from the file
-    cmct_histogram = cmct.cmct(file_locate)
+def ecmct(file_locate:str,cmct_precal = list()):
+    # Is possible to receive the cmct result as parameter, this way we can avoid unnecessary calc
+    cmct_histogram = cmct_precal if(cmct_precal != []) else cmct.cmct(file_locate)
     
     #loading the file as a matrix
     image_matrix = imgToMatrix(file_locate)
