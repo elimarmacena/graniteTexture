@@ -34,8 +34,8 @@ def getSections(matrix_full:np.array, level_subregion:int):
 def getSectionStatistics(matrix:np.array,num_proc):
 	num_row = len(matrix)
 	num_col = len(matrix[0])
-	contrast_array = Array('f',[0]* ((num_row-2) * (num_col-2)),lock=False)
-	mct8_array = Array('f',[0]* ((num_row-2) * (num_col-2)),lock=False)
+	contrast_array = Array('f',[0]* ((num_row) * (num_col)),lock=False)
+	mct8_array = Array('f',[0]* ((num_row) * (num_col)),lock=False)
 	current_line = Value('I', 0)
 	process_list = list()
 	for i in range(num_proc):
