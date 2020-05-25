@@ -1,46 +1,46 @@
 from commons import getFileData,getAllStoneType
 from kfold import kfold
-from sklearn import preprocessing
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn import metrics
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
-def plotMetric(metric_data:list, img_name:str, neighbors_number:int,algorithm_name):
-    img_title = f'{algorithm_name.upper()}-KNN({neighbors_number})'
-    mean_accuracy = sum(metric_data)/(len(metric_data))
+def plotConfusionMatrix(matrix_conf,list_classes,filename):
     fig,axs = plt.subplots()
-    axs.plot(range(10),metric_data,marker='o',linestyle='solid',label='Accuracy')
-    axs.plot(range(10),[mean_accuracy]*10,linestyle='--',label='Mean')
-    axs.set(title= img_title,xlabel='FOLD INTERACTION', ylabel='%')
-    axs.legend()
+    ax = sns.heatmap(matrix_conf,xticklabels=list_classes,
+    yticklabels=list_classes,annot=True,
+    cbar=False, cmap="YlOrBr",
+    linecolor='grey',linewidths=0.1)
     #plt.show()
-    fig.savefig(f'./plot_images/{img_name}')
+    fig.savefig(f'./heatmap/{filename}')
 
-def createFuzzyMatrix(result_pred,train_data, filename):
+def createBaseConfussionMatrix(predicted_data,expected_data):
     stone_types = getAllStoneType()
     fuzzy_matrix = np.zeros((len(stone_types),len(stone_types)),dtype=int)
-    for i in range(len(result_pred)):
-        result = result_pred[i]
-        expected = train_data[i]
+    for i in range(len(predicted_data)):
+        result = predicted_data[i]
+        expected = expected_data[i]
         index_result = stone_types.index(result)
         index_expected = stone_types.index(expected)
         fuzzy_matrix[index_expected][index_result] += 1
-    np.savetxt(filename,fuzzy_matrix,delimiter=',',fmt='%.2f',header=(', '.join(stone_types)),comments='')
+    return fuzzy_matrix
 
-def createSumConfusionMatrix(original_data, predict_data,filename):
+def createGeneralConfussionMatrix(predicted_data,expected_data):
     stone_types = getAllStoneType()
     fuzzy_matrix = np.zeros((len(stone_types),len(stone_types)),dtype=int)
     # As expected both parameters have the same size
-    for i in range(len(original_data)):
-        original_current = original_data[i]
-        predict_current = predict_data[i]
+    for i in range(len(expected_data)):
+        original_current = expected_data[i]
+        predict_current = predicted_data[i]
         # Again both information have the same size here
-        for j in range(len(original_current)):
-            original_index = stone_types.index(original_current[j])
-            predict_index = stone_types.index(predict_current[j])
-            fuzzy_matrix[original_index][predict_index] += 1
-    np.savetxt(filename,fuzzy_matrix,delimiter=',',fmt='%.2f',header=(', '.join(stone_types)),comments='')
+        confusion_matrix = createBaseConfussionMatrix(predict_current,original_current)
+        fuzzy_matrix = fuzzy_matrix + confusion_matrix
+    return np.array(fuzzy_matrix)
+
+def exportMatrixCsv(matrix,list_classes,filename):
+    np.savetxt(filename,matrix,delimiter=',',fmt='%.2f',header=(', '.join(list_classes)),comments='')
+    return 0
 
 def splitInformation(folded_data:list):
     label = list()
@@ -53,17 +53,17 @@ def splitInformation(folded_data:list):
     return label,features
 
 def main():
-    cmct_data_file  = 'D:\\Documents\\GIT\\graniteTexture\\algorithm_data_result\\cmct_results.csv'
-    ecmct_data_file = 'D:\\Documents\\GIT\\graniteTexture\\algorithm_data_result\\ecmct_result.csv'
-    lbp_data_file   = 'D:\\Documents\\GIT\\graniteTexture\\algorithm_data_result\\lbp_results.csv'
+    cmct_data_file  = 'D:\\Documents\\GIT\\graniteTexture\\granite_extraction\\cmct_results.csv'
+    ecmct_data_file = 'D:\\Documents\\GIT\\graniteTexture\\granite_extraction\\ecmct_result.csv'
+    lbp_data_file   = 'D:\\Documents\\GIT\\graniteTexture\\granite_extraction\\lbp_results.csv'
     data_file = [cmct_data_file,ecmct_data_file,lbp_data_file]
     k_neighbors = [3,5,7]
     for neighbor_number in k_neighbors:
         print(f'CURRENT K-NEIGHBOR: {neighbor_number}')
         for algorithm_file in data_file:
             # Variable used to check results after k-fold process
-            order_test = list()
-            order_predict = list()
+            test_label_sequence = list()
+            prediction_sequence = list()
             algorithm_accuracy = list()
             # ====================================================
             algorithm_data = getFileData(algorithm_file)
@@ -82,16 +82,19 @@ def main():
                     if j != i:
                         train_label.extend(fold_labels[j])
                         train_features.extend(fold_features[j])
-                model = KNeighborsClassifier(n_neighbors=neighbor_number)
+                model = KNeighborsClassifier(n_neighbors=neighbor_number,metric='manhattan')
                 model.fit(train_features,train_label)
                 predictions = model.predict(test_features)
                 algorithm_accuracy.append(model.score(test_features,test_label))
-                order_test.append(test_label)
-                order_predict.append(predictions)
-                #createFuzzyMatrix(predictions,test_label,f'./confusion_matrix/{algorithm_name}_knn{neighbor_number}_fold{i}.csv')
-            #createSumConfusionMatrix(order_test,order_predict,f'./confusion_matrix/{algorithm_name}_knn{neighbor_number}.csv')
+                test_label_sequence.append(test_label)
+                prediction_sequence.append(predictions)
+                confusion_matrix = createBaseConfussionMatrix(predictions,test_label)
+                exportMatrixCsv(confusion_matrix,getAllStoneType(),f'./confusion_matrix/{algorithm_name}_knn{neighbor_number}_fold{i}.csv')
+            general_confusion = createGeneralConfussionMatrix(prediction_sequence,test_label_sequence)
+            exportMatrixCsv(general_confusion,getAllStoneType(),f'./confusion_matrix/{algorithm_name}_knn{neighbor_number}.csv')
+            plotConfusionMatrix(general_confusion,getAllStoneType(),f'{algorithm_name}_knn{neighbor_number}.csv')
             print(algorithm_accuracy)
-            print(f'Mean Accuray{sum(algorithm_accuracy)/10}')
+            print(f'Mean Accuray: {sum(algorithm_accuracy)/10}')
             print('EXTRACTOR END\n')
 
 if __name__ == '__main__':
