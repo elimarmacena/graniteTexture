@@ -13,7 +13,7 @@ def plotConfusionMatrix(matrix_conf,list_classes,filename):
     cbar=False, cmap="YlOrBr",
     linecolor='grey',linewidths=0.1)
     #plt.show()
-    fig.savefig(f'./heatmap/{filename}')
+    fig.savefig(f'./heatmap/{filename}', dpi = 200, bbox_inches='tight')
 
 def createBaseConfussionMatrix(predicted_data,expected_data):
     stone_types = getAllStoneType()
@@ -92,7 +92,7 @@ def main():
                 exportMatrixCsv(confusion_matrix,getAllStoneType(),f'./confusion_matrix/{algorithm_name}_knn{neighbor_number}_fold{i}.csv')
             general_confusion = createGeneralConfussionMatrix(prediction_sequence,test_label_sequence)
             exportMatrixCsv(general_confusion,getAllStoneType(),f'./confusion_matrix/{algorithm_name}_knn{neighbor_number}.csv')
-            plotConfusionMatrix(general_confusion,getAllStoneType(),f'{algorithm_name}_knn{neighbor_number}.csv')
+            plotConfusionMatrix(general_confusion,getAllStoneType(),f'{algorithm_name}_knn{neighbor_number}.png')
             print(algorithm_accuracy)
             print(f'Mean Accuray: {sum(algorithm_accuracy)/10}')
             print('EXTRACTOR END\n')
