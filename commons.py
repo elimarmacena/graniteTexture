@@ -68,6 +68,16 @@ def getAllStoneType():
 			stone_type.append(granite_type)
 	return stone_type
 
+def getAllTextureTypes():
+	path_images = getAllTextures()
+	texture_list = list()
+	for image in path_images:
+		tokenized_path = image.split('\\')
+		texture_type = tokenized_path[-1].split('_')[0]
+		if(texture_type not in texture_list and texture_type != 'Thumbs.db'):
+			texture_list.append(texture_type)
+	return texture_list
+
 def writeFile(file_path:str):
 	file_data = open(file_path, 'w')
 	return file_data

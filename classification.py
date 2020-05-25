@@ -1,4 +1,4 @@
-from commons import getFileData,getAllStoneType
+from commons import getFileData,getAllStoneType,getAllTextureTypes
 from kfold import kfold
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn import metrics
@@ -15,26 +15,25 @@ def plotConfusionMatrix(matrix_conf,list_classes,filename):
     #plt.show()
     fig.savefig(f'./heatmap/{filename}', dpi = 200, bbox_inches='tight')
 
-def createBaseConfussionMatrix(predicted_data,expected_data):
-    stone_types = getAllStoneType()
-    fuzzy_matrix = np.zeros((len(stone_types),len(stone_types)),dtype=int)
+def createBaseConfussionMatrix(predicted_data,expected_data,list_classes):
+
+    fuzzy_matrix = np.zeros((len(list_classes),len(list_classes)),dtype=int)
     for i in range(len(predicted_data)):
         result = predicted_data[i]
         expected = expected_data[i]
-        index_result = stone_types.index(result)
-        index_expected = stone_types.index(expected)
+        index_result = list_classes.index(result)
+        index_expected = list_classes.index(expected)
         fuzzy_matrix[index_expected][index_result] += 1
     return fuzzy_matrix
 
-def createGeneralConfussionMatrix(predicted_data,expected_data):
-    stone_types = getAllStoneType()
-    fuzzy_matrix = np.zeros((len(stone_types),len(stone_types)),dtype=int)
+def createGeneralConfussionMatrix(predicted_data,expected_data,list_classes):
+    fuzzy_matrix = np.zeros((len(list_classes),len(list_classes)),dtype=int)
     # As expected both parameters have the same size
     for i in range(len(expected_data)):
         original_current = expected_data[i]
         predict_current = predicted_data[i]
         # Again both information have the same size here
-        confusion_matrix = createBaseConfussionMatrix(predict_current,original_current)
+        confusion_matrix = createBaseConfussionMatrix(predict_current,original_current,list_classes)
         fuzzy_matrix = fuzzy_matrix + confusion_matrix
     return np.array(fuzzy_matrix)
 
@@ -51,11 +50,11 @@ def splitInformation(folded_data:list):
         label.append(fold_labels)
         features.append(fold_features)
     return label,features
-
+#texture_extraction\ecmct_results.csv
 def main():
-    cmct_data_file  = 'D:\\Documents\\GIT\\graniteTexture\\granite_extraction\\cmct_results.csv'
-    ecmct_data_file = 'D:\\Documents\\GIT\\graniteTexture\\granite_extraction\\ecmct_result.csv'
-    lbp_data_file   = 'D:\\Documents\\GIT\\graniteTexture\\granite_extraction\\lbp_results.csv'
+    cmct_data_file  = 'D:\\Documents\\GIT\\graniteTexture\\texture_extraction\\cmct_results.csv'
+    ecmct_data_file = 'D:\\Documents\\GIT\\graniteTexture\\texture_extraction\\ecmct_results.csv'
+    lbp_data_file   = 'D:\\Documents\\GIT\\graniteTexture\\texture_extraction\\lbp_results.csv'
     data_file = [cmct_data_file,ecmct_data_file,lbp_data_file]
     k_neighbors = [3,5,7]
     for neighbor_number in k_neighbors:
@@ -88,11 +87,11 @@ def main():
                 algorithm_accuracy.append(model.score(test_features,test_label))
                 test_label_sequence.append(test_label)
                 prediction_sequence.append(predictions)
-                confusion_matrix = createBaseConfussionMatrix(predictions,test_label)
-                exportMatrixCsv(confusion_matrix,getAllStoneType(),f'./confusion_matrix/granite_{algorithm_name}_knn{neighbor_number}_fold{i}.csv')
-            general_confusion = createGeneralConfussionMatrix(prediction_sequence,test_label_sequence)
-            exportMatrixCsv(general_confusion,getAllStoneType(),f'./confusion_matrix/granite_{algorithm_name}_knn{neighbor_number}.csv')
-            plotConfusionMatrix(general_confusion,getAllStoneType(),f'granite_{algorithm_name}_knn{neighbor_number}.png')
+                confusion_matrix = createBaseConfussionMatrix(predictions,test_label,getAllTextureTypes())
+                exportMatrixCsv(confusion_matrix,getAllTextureTypes(),f'./confusion_matrix/texture_{algorithm_name}_knn{neighbor_number}_fold{i}.csv')
+            general_confusion = createGeneralConfussionMatrix(prediction_sequence,test_label_sequence,getAllTextureTypes())
+            exportMatrixCsv(general_confusion,getAllTextureTypes(),f'./confusion_matrix/texture_{algorithm_name}_knn{neighbor_number}.csv')
+            plotConfusionMatrix(general_confusion,getAllTextureTypes(),f'texture_{algorithm_name}_knn{neighbor_number}.png')
             print(algorithm_accuracy)
             print(f'Mean Accuray: {sum(algorithm_accuracy)/10}')
             print('EXTRACTOR END\n')
