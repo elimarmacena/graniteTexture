@@ -1,6 +1,6 @@
 import numpy as np
 from multiprocessing import Process, Array, Value
-import commons
+from utils import commons
 def ctdn(matrix:np.array, num_proc = 6):
 	num_row = len(matrix)
 	num_col = len(matrix[0])

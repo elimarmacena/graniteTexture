@@ -1,8 +1,8 @@
 import time
-import commons
-import ecmct
-import lbp
-import cmct
+from utils import commons
+from Descriptors import ecmct as ecmct
+from Descriptors import lbp as lbp
+from Descriptors import cmct as cmct
 
 def main():
 	start_time = time.time()

@@ -1,5 +1,5 @@
-import asyncMct as mct
-from commons import imgToMatrix
+from descriptors import asyncMct as mct
+from utils.commons import imgToMatrix
 def cmct(image:str):
     #gray image matrix
     image_matrix = imgToMatrix(image)

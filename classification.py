@@ -1,5 +1,5 @@
-from commons import getFileData,getAllStoneType,getAllTextureTypes
-from kfold import kfold
+from utils.commons import getFileData,getAllStoneType,getAllTextureTypes
+from utils.kfold import kfold
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn import metrics
 import numpy as np
@@ -8,6 +8,7 @@ import seaborn as sns
 
 def plotConfusionMatrix(matrix_conf,list_classes,filename):
     fig,axs = plt.subplots()
+    # Heat map definition
     ax = sns.heatmap(matrix_conf,xticklabels=list_classes,
     yticklabels=list_classes,annot=True,
     cbar=False, cmap="YlOrBr",
@@ -15,9 +16,9 @@ def plotConfusionMatrix(matrix_conf,list_classes,filename):
     #plt.show()
     fig.savefig(f'./heatmap/{filename}', dpi = 200, bbox_inches='tight')
 
-def createBaseConfussionMatrix(predicted_data,expected_data,list_classes):
-
+def createBaseConfusionMatrix(predicted_data,expected_data,list_classes):
     fuzzy_matrix = np.zeros((len(list_classes),len(list_classes)),dtype=int)
+    # Matrix value definition
     for i in range(len(predicted_data)):
         result = predicted_data[i]
         expected = expected_data[i]
@@ -33,7 +34,7 @@ def createGeneralConfussionMatrix(predicted_data,expected_data,list_classes):
         original_current = expected_data[i]
         predict_current = predicted_data[i]
         # Again both information have the same size here
-        confusion_matrix = createBaseConfussionMatrix(predict_current,original_current,list_classes)
+        confusion_matrix = createBaseConfusionMatrix(predict_current,original_current,list_classes)
         fuzzy_matrix = fuzzy_matrix + confusion_matrix
     return np.array(fuzzy_matrix)
 
@@ -42,6 +43,9 @@ def exportMatrixCsv(matrix,list_classes,filename):
     return 0
 
 def splitInformation(folded_data:list):
+    """
+        Divide the descriptor data into label and feature
+    """
     label = list()
     features = list()
     for fold in folded_data:
@@ -50,11 +54,22 @@ def splitInformation(folded_data:list):
         label.append(fold_labels)
         features.append(fold_features)
     return label,features
-#texture_extraction\ecmct_results.csv
+
+
 def main():
+    
+    # Granite source
+    #cmct_data_file  = 'D:\\Documents\\GIT\\graniteTexture\\granite_extraction\\cmct_results.csv'
+    #ecmct_data_file = 'D:\\Documents\\GIT\\graniteTexture\\granite_extraction\\ecmct_results.csv'
+    #lbp_data_file   = 'D:\\Documents\\GIT\\graniteTexture\\granite_extraction\\lbp_results.csv'
+    #=============================================================================================
+
+    # Texture source
     cmct_data_file  = 'D:\\Documents\\GIT\\graniteTexture\\texture_extraction\\cmct_results.csv'
     ecmct_data_file = 'D:\\Documents\\GIT\\graniteTexture\\texture_extraction\\ecmct_results.csv'
     lbp_data_file   = 'D:\\Documents\\GIT\\graniteTexture\\texture_extraction\\lbp_results.csv'
+    #=============================================================================================
+    
     data_file = [cmct_data_file,ecmct_data_file,lbp_data_file]
     k_neighbors = [3,5,7]
     for neighbor_number in k_neighbors:
@@ -74,20 +89,25 @@ def main():
                 # Getting test information
                 test_label = fold_labels[i]
                 test_features = fold_features[i]
-                # Getting train information
+
+                # Getting training batchs
                 train_label = list()
                 train_features = list()
                 for j in range(len(folded_data)):
                     if j != i:
                         train_label.extend(fold_labels[j])
                         train_features.extend(fold_features[j])
+                
+                # Classifier definition
                 model = KNeighborsClassifier(n_neighbors=neighbor_number,metric='manhattan')
                 model.fit(train_features,train_label)
                 predictions = model.predict(test_features)
                 algorithm_accuracy.append(model.score(test_features,test_label))
                 test_label_sequence.append(test_label)
                 prediction_sequence.append(predictions)
-                confusion_matrix = createBaseConfussionMatrix(predictions,test_label,getAllTextureTypes())
+
+                # Exportation and creation of confusion matrix
+                confusion_matrix = createBaseConfusionMatrix(predictions,test_label,getAllTextureTypes())
                 exportMatrixCsv(confusion_matrix,getAllTextureTypes(),f'./confusion_matrix/texture_{algorithm_name}_knn{neighbor_number}_fold{i}.csv')
             general_confusion = createGeneralConfussionMatrix(prediction_sequence,test_label_sequence,getAllTextureTypes())
             exportMatrixCsv(general_confusion,getAllTextureTypes(),f'./confusion_matrix/texture_{algorithm_name}_knn{neighbor_number}.csv')

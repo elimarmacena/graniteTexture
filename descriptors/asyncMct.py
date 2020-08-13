@@ -1,6 +1,6 @@
 import numpy
 from multiprocessing import Process, Array, Value
-import commons
+from utils import commons
 
 def mct(matrix:numpy.array, num_process = 4):
 	num_row = len(matrix)

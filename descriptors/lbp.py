@@ -1,5 +1,5 @@
 import numpy as np
-import commons as Commons
+from utils import commons as Commons
 def lbp(file_locate:str):
     matrix = Commons.imgToMatrix(file_locate)
     num_row = len(matrix)

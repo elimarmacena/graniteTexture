@@ -1,8 +1,8 @@
-from commons import imgToMatrix
-import cmct
-import ctdn
-import asyncStatisticVector
-import asyncCtdn
+from utils.commons import imgToMatrix
+from descriptors import cmct
+from descriptors import ctdn
+from descriptors import asyncStatisticVector
+from descriptors import asyncCtdn
 
 def ecmct(file_locate:str,cmct_precal = list()):
     # Is possible to receive the cmct result as parameter, this way we can avoid unnecessary calc

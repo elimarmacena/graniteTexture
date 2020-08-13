@@ -1,6 +1,6 @@
 import numpy as np
-import mct as mct8
-import commons
+from descriptors import mct as mct8
+from utils import commons
 from math import pow
 
 def statisticVector(matrix_input:np.array, SUBDIV=2):

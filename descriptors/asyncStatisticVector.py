@@ -1,5 +1,5 @@
 import numpy as np
-from asyncMct import getMctValue
+from descriptors.asyncMct import getMctValue
 from multiprocessing import Process, Array, Value
 def statisticVector(matrix_input:np.array, SUBDIV = 2, NUM_PROC = 4):
 	segment_infomration = list()

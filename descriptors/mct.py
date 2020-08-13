@@ -1,7 +1,7 @@
 # as default the function work the algorith using the 8bits approach
 # having 2^8 values possible
 import numpy as np
-import commons as Commons
+from utils import commons as Commons
 
 def mct(matrix:np.array, approach=8):
 	num_row = len(matrix)

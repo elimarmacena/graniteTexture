@@ -2,9 +2,6 @@ import numpy as np
 import glob
 from PIL import Image
 import sys
-from os.path import dirname, abspath
-diretorio = dirname(dirname(abspath(__file__)))
-sys.path.append(diretorio)
 
 def imgToMatrix(fileLocation: str):
 	# open the passed image as a grayscale image
